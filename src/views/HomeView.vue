@@ -4,11 +4,11 @@ const router = useRouter()
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto px-6 py-20 text-center">
+  <div class="max-w-5xl mx-auto px-6 py-20 text-center">
     <h1 class="text-5xl font-bold mb-3 text-white">⚡ Tekken Drill</h1>
     <p class="text-gray-400 mb-16 text-lg">Frame Data Trainer</p>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <button
         @click="router.push('/make-drill')"
         class="bg-gray-900 border border-gray-700 hover:border-yellow-400 hover:bg-gray-800 rounded-2xl p-8 text-left transition-all duration-200 group"
