@@ -31,12 +31,26 @@ function restoreFromCode() {
   try {
     const jsonStr = decodeURIComponent(atob(restoreCode.value.trim()))
     const data = JSON.parse(jsonStr)
+    
+    // 1. D'abord, on efface toutes les anciennes données de l'ordinateur 
+    // qui commencent par "tekken-" pour faire place nette
+    const keysToRemove = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i)
+      if (k && k.startsWith('tekken-')) {
+        keysToRemove.push(k)
+      }
+    }
+    keysToRemove.forEach(k => localStorage.removeItem(k))
+
+    // 2. Ensuite, on réinjecte uniquement les données contenues dans le code
     for (const [key, value] of Object.entries(data)) {
       if (key.startsWith('tekken-')) {
         localStorage.setItem(key, value)
       }
     }
-    message.value = "Données restaurées avec succès !"
+    
+    message.value = "Données restaurées avec succès ! C'est la liste EXACTE maintenant."
     restoreCode.value = ''
   } catch (e) {
     message.value = "Erreur : Code invalide ou corrompu."

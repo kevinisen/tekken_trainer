@@ -30,12 +30,14 @@ const hitLevelBadge = computed(() => {
 })
 
 const hovered = ref(false)
+const videoLoaded = ref(false)
 const tooltipPos = ref({ top: 0, left: 0, below: true })
 const cardRef = ref(null)
 
 function onMouseEnter() {
   if (!props.videoTooltip || !props.move.video_url) return
   hovered.value = true
+  videoLoaded.value = false // Reset loader state each time we hover
   const rect = cardRef.value.getBoundingClientRect()
   const tooltipH = 200
   const below = rect.bottom + tooltipH + 8 <= window.innerHeight
@@ -100,18 +102,27 @@ function onMouseLeave() {
       class="fixed z-50 w-80 bg-gray-900 border border-gray-600 rounded-xl shadow-2xl overflow-hidden pointer-events-none"
       :style="{ top: tooltipPos.top + 'px', left: tooltipPos.left + 'px' }"
     >
-      <div class="px-3 pt-2 pb-1 text-xs text-gray-400 font-mono flex items-center gap-2">
+      <div class="px-3 pt-2 pb-1 text-xs text-gray-400 font-mono flex items-center gap-2 relative z-10 bg-gray-900 border-b border-gray-800">
         <span class="text-white font-semibold">{{ move.name || move.command }}</span>
         <span class="text-blue-300 bg-blue-900/40 px-1.5 rounded">{{ move.command }}</span>
       </div>
-      <video
-        :src="move.video_url"
-        autoplay
-        loop
-        muted
-        playsinline
-        class="w-full aspect-video object-contain bg-black"
-      />
+      
+      <div class="relative w-full aspect-video bg-black">
+        <!-- Loader that shows while video is loading/buffering -->
+        <div v-if="!videoLoaded" class="absolute inset-0 flex items-center justify-center bg-gray-900/80">
+          <div class="w-8 h-8 border-4 border-gray-600 border-t-yellow-400 rounded-full animate-spin"></div>
+        </div>
+
+        <video
+          :src="move.video_url"
+          autoplay
+          loop
+          muted
+          playsinline
+          @canplay="videoLoaded = true"
+          :class="['w-full h-full object-contain transition-opacity duration-300', videoLoaded ? 'opacity-100' : 'opacity-0']"
+        />
+      </div>
     </div>
   </Teleport>
 </div>
