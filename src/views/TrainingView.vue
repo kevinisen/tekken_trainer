@@ -49,10 +49,29 @@ function launchDrill() {
   drillStore.setupDrill(allMoves, timerDuration.value, charKey)
   router.push('/drill')
 }
+
+// --- Preload videos des persos cochés ---
+const preloadedVideos = computed(() => {
+  const urls = new Set()
+  for (const charId of selectedChars.value) {
+    const char = charStore.characters.find(c => c.id === charId)
+    if (!char) continue
+    const savedIds = getSavedIds(charId)
+    char.moves.forEach(m => {
+      if (savedIds.has(m._id) && m.video_url) urls.add(m.video_url)
+    })
+  }
+  return Array.from(urls)
+})
 </script>
 
 <template>
   <div class="max-w-4xl mx-auto px-6 py-12">
+    <!-- Preload caché -->
+    <div class="hidden">
+      <link v-for="url in preloadedVideos" :key="url" rel="preload" as="video" :href="url" />
+    </div>
+
     <h1 class="text-4xl font-bold text-center mb-2 text-white">Training Drill</h1>
     <p class="text-center text-gray-400 mb-8">
       Sélectionne les persos à driller — les moves viennent de ton

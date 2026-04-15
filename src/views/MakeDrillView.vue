@@ -100,10 +100,23 @@ function saveSelection() {
   saved.value = true
   setTimeout(() => saved.value = false, 2000)
 }
+
+// --- Preload videos des moves sélectionnés ---
+const preloadedVideos = computed(() => {
+  if (!activeChar.value) return []
+  return activeChar.value.moves
+    .filter(m => selected.value.has(m._id) && m.video_url)
+    .map(m => m.video_url)
+})
 </script>
 
 <template>
   <div class="flex h-[calc(100vh-57px)]">
+    <!-- Preload caché pour les vidéos sélectionnées -->
+    <div class="hidden">
+      <link v-for="url in preloadedVideos" :key="url" rel="preload" as="video" :href="url" />
+    </div>
+
     <!-- Left panel: character list -->
     <div class="w-56 flex-shrink-0 border-r border-gray-800 overflow-y-auto bg-gray-950">
       <div class="p-3 text-xs text-gray-500 uppercase tracking-wider font-semibold">Personnages</div>
